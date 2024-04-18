@@ -21,6 +21,8 @@ public:
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
 		if (object->GetType() == GameObjectType("Spaceship")) {
+			std :: cout << "hi";
+
 			mLives -= 1;
 			FirePlayerKilled();
 		}

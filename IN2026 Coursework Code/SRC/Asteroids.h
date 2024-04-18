@@ -22,6 +22,8 @@ public:
 
 	virtual void Start(void);
 	virtual void Stop(void);
+	void StartGame(void);
+	void DisplayStartScreen(void);
 
 	// Declaration of IKeyboardListener interface ////////////////////////////////
 
@@ -52,6 +54,7 @@ private:
 	shared_ptr<GUILabel> mScoreLabel;
 	shared_ptr<GUILabel> mLivesLabel;
 	shared_ptr<GUILabel> mGameOverLabel;
+	shared_ptr<GUILabel> mStartLabel;
 
 	uint mLevel;
 	uint mAsteroidCount;
@@ -68,6 +71,7 @@ private:
 
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
+	bool mgameStarted = false;
 };
 
 #endif

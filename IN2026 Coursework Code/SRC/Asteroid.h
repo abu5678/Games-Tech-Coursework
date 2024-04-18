@@ -6,6 +6,7 @@
 class Asteroid : public GameObject
 {
 public:
+
 	Asteroid(void);
 	~Asteroid(void);
 
