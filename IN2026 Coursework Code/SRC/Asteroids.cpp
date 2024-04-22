@@ -11,6 +11,7 @@
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
+#include "HeartPowerUp.h"
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
 
@@ -58,6 +59,7 @@ void Asteroids::Start()
 	glEnable(GL_LIGHT0);
 
 	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
+	Animation* HeartPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("HeartPowerUp", 128, 128, 128, 128, "heart5_fs.png");
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
 
@@ -79,8 +81,10 @@ void Asteroids::StartGame() {
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
 
+
 	//Make the start message dissapear
 	mStartLabel->SetVisible(false);
+	mTitleLabel->SetVisible(false);
 
 	//Create the GUI
 	CreateGUI();
@@ -89,6 +93,22 @@ void Asteroids::StartGame() {
 
 void Asteroids::DisplayStartScreen()
 {
+	// Add a (transparent) border around the edge of the game display
+	mGameDisplay->GetContainer()->SetBorder(GLVector2i(10, 70));
+
+	// Create a new GUILabel and wrap it up in a shared_ptr
+	mTitleLabel = make_shared<GUILabel>("Asteroids");
+	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
+	mTitleLabel->SetHorizontalAlignment(GUIComponent::GUI_HALIGN_CENTER);
+	// Set the vertical alignment of the label to GUI_VALIGN_MIDDLE
+	mTitleLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
+	// Add the GUILabel to the GUIContainer  
+	shared_ptr<GUIComponent> title_component = static_pointer_cast<GUIComponent>(mTitleLabel);
+	mGameDisplay->GetContainer()->AddComponent(title_component, GLVector2f(0.5f, 1.0f));
+	title_component->SetSize(GLVector2i(10));
+	//mTitleLabel->SetSize(GLVector2i(10));
+	
+
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mStartLabel = make_shared<GUILabel>("Press any key to start");
 	// Set the horizontal alignment of the label to GUI_HALIGN_CENTER
@@ -173,12 +193,19 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetPosition(object->GetPosition());
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
+
+		shared_ptr<GameObject> HeartPowerUp = CreateHeartPowerUp();
+		HeartPowerUp->SetPosition(object->GetPosition());
+		HeartPowerUp->SetRotation(object->GetRotation());
+		mGameWorld->AddObject(HeartPowerUp);
+
 		mAsteroidCount--;
-		if (mAsteroidCount <= 0) 
-		{ 
-			SetTimer(500, START_NEXT_LEVEL); 
+		if (mAsteroidCount <= 0)
+		{
+			SetTimer(500, START_NEXT_LEVEL);
 		}
 	}
+	
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -291,6 +318,7 @@ void Asteroids::OnScoreChanged(int score)
 
 void Asteroids::OnPlayerKilled(int lives_left)
 {
+	
 	shared_ptr<GameObject> explosion = CreateExplosion();
 	explosion->SetPosition(mSpaceship->GetPosition());
 	explosion->SetRotation(mSpaceship->GetRotation());
@@ -324,7 +352,18 @@ shared_ptr<GameObject> Asteroids::CreateExplosion()
 	explosion->Reset();
 	return explosion;
 }
+shared_ptr<GameObject> Asteroids::CreateHeartPowerUp()
+{
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("HeartPowerUp");
+	shared_ptr<Sprite> heart_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	heart_sprite->SetLoopAnimation(false);
+	shared_ptr<GameObject> heartPowerUp = make_shared<HeartPowerUp>();
+	heartPowerUp->SetBoundingShape(make_shared<BoundingSphere>(heartPowerUp->GetThisPtr(), 10.0f));
+	heartPowerUp->SetSprite(heart_sprite);
+	heartPowerUp->SetScale(0.1f);
+	heartPowerUp->Reset();
 
-
-
+	return heartPowerUp;
+}
 

@@ -26,6 +26,10 @@ public:
 			mLives -= 1;
 			FirePlayerKilled();
 		}
+		if (object->GetType() == GameObjectType("HeartPowerUp")) {
+
+			mLives += 1;
+		}
 	}
 
 	void AddListener(shared_ptr<IPlayerListener> listener)
