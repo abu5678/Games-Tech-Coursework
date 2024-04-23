@@ -7,6 +7,8 @@
 #include "IGameWorldListener.h"
 #include "IScoreListener.h" 
 #include "ScoreKeeper.h"
+#include "PowerUpListener.h"
+#include "PowerUp.h"
 #include "Player.h"
 #include "IPlayerListener.h"
 
@@ -14,7 +16,8 @@ class GameObject;
 class Spaceship;
 class GUILabel;
 
-class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener
+class Asteroids : public GameSession, public IKeyboardListener, public IGameWorldListener, public IScoreListener, public IPlayerListener,
+	public PowerUpListener
 {
 public:
 	Asteroids(int argc, char *argv[]);
@@ -35,6 +38,8 @@ public:
 	// Declaration of IScoreListener interface //////////////////////////////////
 
 	void OnScoreChanged(int score);
+
+	void OnExtraBulletsPowerUpCollected();
 
 	// Declaration of the IPlayerLister interface //////////////////////////////
 
@@ -70,8 +75,9 @@ private:
 	shared_ptr<GameObject> CreateExplosion();
 	shared_ptr<GameObject> CreateHeartPowerUp();
 	shared_ptr<GameObject> CreateExtraBulletsPowerUp();
-	shared_ptr<GameObject> CreateLaserPowerUp();
 	shared_ptr<GameObject> CreateShieldPowerUp();
+
+	shared_ptr<GameObject> CreateExtraBulletsPowerUpIcon();
 
 	
 	const static uint SHOW_GAME_OVER = 0;
@@ -79,6 +85,7 @@ private:
 	const static uint CREATE_NEW_PLAYER = 2;
 
 	ScoreKeeper mScoreKeeper;
+	PowerUp mPowerUp;
 	Player mPlayer;
 	bool mgameStarted = false;
 	bool ExtraBulletsActive = false;

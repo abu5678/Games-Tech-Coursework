@@ -13,7 +13,6 @@
 #include "Explosion.h"
 #include "HeartPowerUp.h"
 #include "ExtraBulletsPowerUp.h"
-#include "LaserPowerUp.h"
 #include "ShieldPowerUp.h"
 
 
@@ -55,6 +54,11 @@ void Asteroids::Start()
 	// Add this class as a listener of the score keeper
 	mScoreKeeper.AddListener(thisPtr);
 
+	mGameWorld->AddListener(&mPowerUp);
+
+	mPowerUp.AddListener(thisPtr);
+
+
 	// Create an ambient light to show sprite textures
 	GLfloat ambient_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat diffuse_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -65,7 +69,6 @@ void Asteroids::Start()
 	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation* HeartPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("HeartPowerUp", 128, 128, 128, 128, "heart_fs.png");
 	Animation* ExtraBulletsPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("ExtraBulletsPowerUp", 128, 128, 128, 128, "bullets_fs.png");
-	Animation* LaserPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("LaserPowerUp", 128, 128, 128, 128, "laser_fs.png");
 	Animation* ShieldPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("ShieldPowerUp", 128, 128, 128, 128, "shield_fs.png");
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
@@ -201,18 +204,19 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
 
-		int random = (rand() % 3);
-		if (random == 1) {
+		int random = (rand() % 2);
+		if (random == 5) {
 			shared_ptr<GameObject> HeartPowerUp = CreateHeartPowerUp();
 			HeartPowerUp->SetPosition(object->GetPosition());
 			HeartPowerUp->SetRotation(object->GetRotation());
 			mGameWorld->AddObject(HeartPowerUp);
 		}
-		if (random == 2) {
+		if (random == 1) {
 			shared_ptr<GameObject> ExtraBulletsPowerUp = CreateExtraBulletsPowerUp();
 			ExtraBulletsPowerUp->SetPosition(object->GetPosition());
 			ExtraBulletsPowerUp->SetRotation(object->GetRotation());
 			mGameWorld->AddObject(ExtraBulletsPowerUp);
+
 		}
 
 		mAsteroidCount--;
@@ -336,6 +340,12 @@ void Asteroids::OnScoreChanged(int score)
 	mScoreLabel->SetText(score_msg);
 }
 
+void Asteroids::OnExtraBulletsPowerUpCollected() {
+	shared_ptr<GameObject> ExtraBulletsPowerUpIcon = CreateExtraBulletsPowerUpIcon();
+	ExtraBulletsPowerUpIcon->SetPosition(-75);
+	mGameWorld->AddObject(ExtraBulletsPowerUpIcon);
+}
+
 void Asteroids::OnHeartPickup(int lives_left)
 {
 	// Format the lives left message using an string-based stream
@@ -410,18 +420,16 @@ shared_ptr<GameObject> Asteroids::CreateExtraBulletsPowerUp()
 	return extraBulletsPowerUp;
 }
 
-shared_ptr<GameObject> Asteroids::CreateLaserPowerUp()
+shared_ptr<GameObject> Asteroids::CreateExtraBulletsPowerUpIcon()
 {
-	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("HeartPowerUp");
-	shared_ptr<Sprite> heart_sprite =
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("ExtraBulletsPowerUp");
+	shared_ptr<Sprite> ExtraBullets_sprite =
 		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-	heart_sprite->SetLoopAnimation(false);
-	shared_ptr<GameObject> heartPowerUp = make_shared<HeartPowerUp>();
-	heartPowerUp->SetBoundingShape(make_shared<BoundingSphere>(heartPowerUp->GetThisPtr(), 8.0f));
-	heartPowerUp->SetSprite(heart_sprite);
-	heartPowerUp->SetScale(0.1f);
-	heartPowerUp->Reset();
-	return heartPowerUp;
+	ExtraBullets_sprite->SetLoopAnimation(false);
+	shared_ptr<GameObject> extraBulletsPowerUp = make_shared<ExtraBulletsPowerUp>();
+	extraBulletsPowerUp->SetSprite(ExtraBullets_sprite);
+	extraBulletsPowerUp->SetScale(0.1f);
+	return extraBulletsPowerUp;
 }
 
 shared_ptr<GameObject> Asteroids::CreateShieldPowerUp()

@@ -5,13 +5,13 @@
 
 #include "GameObject.h"
 #include "GameObjectType.h"
-#include "IScoreListener.h"
+#include "PowerUpListener.h"
 #include "IGameWorldListener.h"
 
 class PowerUp : public IGameWorldListener
 {
 public:
-	PowerUp() { mScore = 0; }
+	PowerUp() {}
 	virtual ~PowerUp() {}
 
 	void OnWorldUpdated(GameWorld* world) {}
@@ -20,30 +20,27 @@ public:
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
 		if (object->GetType() == GameObjectType("ExtraBulletsPowerUp")) {
-			mScore += 10;
-			FireScoreChanged();
+			FireExtraBulletsPickedUp();
 		}
 	}
 
-	void AddListener(shared_ptr<IScoreListener> listener)
+	void AddListener(shared_ptr<PowerUpListener> listener)
 	{
 		mListeners.push_back(listener);
 	}
-
-	void FireScoreChanged()
+	void FireExtraBulletsPickedUp()
 	{
 		// Send message to all listeners
-		for (ScoreListenerList::iterator lit = mListeners.begin(); lit != mListeners.end(); ++lit) {
-			(*lit)->OnScoreChanged(mScore);
+		for (PowerUpListenerList::iterator lit = mListeners.begin(); lit != mListeners.end(); ++lit) {
+			(*lit)->OnExtraBulletsPowerUpCollected();
 		}
 	}
 
 private:
-	int mScore;
 
-	typedef std::list< shared_ptr<IScoreListener> > ScoreListenerList;
+	typedef std::list< shared_ptr<PowerUpListener> > PowerUpListenerList;
 
-	ScoreListenerList mListeners;
+	PowerUpListenerList mListeners;
 };
 
 #endif
