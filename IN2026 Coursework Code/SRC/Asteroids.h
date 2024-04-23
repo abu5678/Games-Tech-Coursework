@@ -76,13 +76,16 @@ private:
 	shared_ptr<GameObject> CreateHeartPowerUp();
 	shared_ptr<GameObject> CreateExtraBulletsPowerUp();
 	shared_ptr<GameObject> CreateShieldPowerUp();
-
 	shared_ptr<GameObject> CreateExtraBulletsPowerUpIcon();
+	shared_ptr<GameObject> ExtraBulletsPowerUpIcon;
+
 
 	
 	const static uint SHOW_GAME_OVER = 0;
 	const static uint START_NEXT_LEVEL = 1;
 	const static uint CREATE_NEW_PLAYER = 2;
+	const static uint EXTRABULLETSPOWERUP_OVER = 3;
+
 
 	ScoreKeeper mScoreKeeper;
 	PowerUp mPowerUp;

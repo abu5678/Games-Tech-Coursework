@@ -19,7 +19,6 @@ ExtraBulletsPowerUp::~ExtraBulletsPowerUp(void) {}
 
 // PUBLIC INSTANCE METHODS ////////////////////////////////////////////////////
 
-
 bool ExtraBulletsPowerUp::CollisionTest(shared_ptr<GameObject> o)
 {
 	if (o->GetType() != GameObjectType("Bullet")) return false;

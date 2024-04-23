@@ -211,7 +211,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			HeartPowerUp->SetRotation(object->GetRotation());
 			mGameWorld->AddObject(HeartPowerUp);
 		}
-		if (random == 1) {
+		if (random == 1 && !ExtraBulletsActive) {
 			shared_ptr<GameObject> ExtraBulletsPowerUp = CreateExtraBulletsPowerUp();
 			ExtraBulletsPowerUp->SetPosition(object->GetPosition());
 			ExtraBulletsPowerUp->SetRotation(object->GetRotation());
@@ -252,6 +252,13 @@ void Asteroids::OnTimer(int value)
 	if (value == SHOW_GAME_OVER)
 	{
 		mGameOverLabel->SetVisible(true);
+	}
+
+	if (value == EXTRABULLETSPOWERUP_OVER)
+	{
+		ExtraBulletsPowerUpIcon->SetPosition(-1000);
+		//ExtraBulletsPowerUpIcon = nullptr;
+		ExtraBulletsActive = false;
 	}
 
 }
@@ -341,9 +348,10 @@ void Asteroids::OnScoreChanged(int score)
 }
 
 void Asteroids::OnExtraBulletsPowerUpCollected() {
-	shared_ptr<GameObject> ExtraBulletsPowerUpIcon = CreateExtraBulletsPowerUpIcon();
+	ExtraBulletsPowerUpIcon = CreateExtraBulletsPowerUpIcon();
 	ExtraBulletsPowerUpIcon->SetPosition(-75);
 	mGameWorld->AddObject(ExtraBulletsPowerUpIcon);
+	SetTimer(7500, EXTRABULLETSPOWERUP_OVER);
 }
 
 void Asteroids::OnHeartPickup(int lives_left)
