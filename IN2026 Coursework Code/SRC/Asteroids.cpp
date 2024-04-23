@@ -106,7 +106,6 @@ void Asteroids::DisplayStartScreen()
 	shared_ptr<GUIComponent> title_component = static_pointer_cast<GUIComponent>(mTitleLabel);
 	mGameDisplay->GetContainer()->AddComponent(title_component, GLVector2f(0.5f, 1.0f));
 	title_component->SetSize(GLVector2i(10));
-	//mTitleLabel->SetSize(GLVector2i(10));
 	
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
@@ -205,7 +204,7 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			SetTimer(500, START_NEXT_LEVEL);
 		}
 	}
-	
+
 }
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING ITimerListener ////////////////////////
@@ -316,6 +315,16 @@ void Asteroids::OnScoreChanged(int score)
 	mScoreLabel->SetText(score_msg);
 }
 
+void Asteroids::OnHeartPickup(int lives_left)
+{
+	// Format the lives left message using an string-based stream
+	std::ostringstream msg_stream;
+	msg_stream << "Lives: " << lives_left;
+	// Get the lives left message as a string
+	std::string lives_msg = msg_stream.str();
+	mLivesLabel->SetText(lives_msg);
+}
+
 void Asteroids::OnPlayerKilled(int lives_left)
 {
 	
@@ -359,7 +368,7 @@ shared_ptr<GameObject> Asteroids::CreateHeartPowerUp()
 		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
 	heart_sprite->SetLoopAnimation(false);
 	shared_ptr<GameObject> heartPowerUp = make_shared<HeartPowerUp>();
-	heartPowerUp->SetBoundingShape(make_shared<BoundingSphere>(heartPowerUp->GetThisPtr(), 10.0f));
+	heartPowerUp->SetBoundingShape(make_shared<BoundingSphere>(heartPowerUp->GetThisPtr(), 8.0f));
 	heartPowerUp->SetSprite(heart_sprite);
 	heartPowerUp->SetScale(0.1f);
 	heartPowerUp->Reset();

@@ -92,6 +92,7 @@ void Spaceship::Shoot(void)
 
 }
 
+
 bool Spaceship::CollisionTest(shared_ptr<GameObject> o)
 {
 	if (o->GetType() != GameObjectType("Asteroid")) return false;

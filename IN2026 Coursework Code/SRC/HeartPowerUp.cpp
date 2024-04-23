@@ -27,14 +27,12 @@ void HeartPowerUp::Update(int t)
 
 	if (mSprite.get() == NULL) return;
 
-	// If sprite has finished animation remove HeartPowerUp from world
-//	if (!mSprite->IsAnimating()) {
-//		if (mWorld) mWorld->FlagForRemoval(GetThisPtr());
-//	}
 }
+
 bool HeartPowerUp::CollisionTest(shared_ptr<GameObject> o)
 {
-	if (GetType() == o->GetType()) return false;
+	if (o->GetType() != GameObjectType("Bullet")) return false;
+	//if (GetType() == o->GetType()) return false;
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
 	return mBoundingShape->CollisionTest(o->GetBoundingShape());

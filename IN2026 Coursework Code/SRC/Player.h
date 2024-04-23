@@ -26,15 +26,26 @@ public:
 			mLives -= 1;
 			FirePlayerKilled();
 		}
-		if (object->GetType() == GameObjectType("HeartPowerUp")) {
+		else if (object->GetType() == GameObjectType("HeartPowerUp")) {
 
 			mLives += 1;
+			IncreaseHP();
 		}
+		
 	}
 
 	void AddListener(shared_ptr<IPlayerListener> listener)
 	{
 		mListeners.push_back(listener);
+	}
+
+	void IncreaseHP()
+	{
+		// Send message to all listeners
+		for (PlayerListenerList::iterator lit = mListeners.begin();
+			lit != mListeners.end(); ++lit) {
+			(*lit)->OnHeartPickup(mLives);
+		}
 	}
 
 	void FirePlayerKilled()

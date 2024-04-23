@@ -120,6 +120,7 @@
     <ClInclude Include="..\..\SRC\IPlayerListener.h" />
     <ClInclude Include="..\..\SRC\IScoreListener.h" />
     <ClInclude Include="..\..\SRC\Player.h" />
+    <ClInclude Include="..\..\SRC\PowerUp.h" />
     <ClInclude Include="..\..\SRC\ScoreKeeper.h" />
     <ClInclude Include="..\..\src\Spaceship.h" />
   </ItemGroup>
