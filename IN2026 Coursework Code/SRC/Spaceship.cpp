@@ -94,33 +94,29 @@ void Spaceship::Shoot(void)
 void Spaceship::ShootExtraBullets(void) {
 	// Check the world exists
 	if (!mWorld) return;
-	// Construct a unit length vector in the direction the spaceship is headed
-	GLVector3f spaceship_heading(cos(DEG2RAD * mAngle), sin(DEG2RAD * mAngle),0);
-	spaceship_heading.normalize();
-	// Calculate the point at the node of the spaceship from position and heading
-	GLVector3f bullet_position = mPosition + (spaceship_heading * 4);
-	// Calculate how fast the bullet should travel
-	float bullet_speed = 30;
-	// Construct a vector for the bullet's velocity
-	GLVector3f bullet_velocity = mVelocity + spaceship_heading * bullet_speed;
+		GLVector3f spaceship_heading(cos(DEG2RAD * (mAngle +30)), sin(DEG2RAD * (mAngle + 30)), 0);
+		spaceship_heading.normalize();
+		GLVector3f bullet_position = mPosition + (spaceship_heading * 4);
+		float bullet_speed = 30;
+		GLVector3f bullet_velocity = mVelocity + spaceship_heading * bullet_speed;
 
+		shared_ptr<GameObject> bullet
+		(new Bullet(bullet_position, bullet_velocity, mAcceleration, mAngle, 0, 2000));
+		bullet->SetBoundingShape(make_shared<BoundingSphere>(bullet->GetThisPtr(), 2.0f));
+		bullet->SetShape(mBulletShape);
+		mWorld->AddObject(bullet);
+	
 
-	bullet_position.y -= 5;
+		GLVector3f spaceship_heading2(cos(DEG2RAD * (mAngle - 30)), sin(DEG2RAD * (mAngle - 30)), 0);
+		spaceship_heading2.normalize();
+		GLVector3f bullet_position2 = mPosition + (spaceship_heading2 * 4);
+		GLVector3f bullet_velocity2 = mVelocity + spaceship_heading2 * bullet_speed;
+
 	shared_ptr<GameObject> bullet2
-	(new Bullet(bullet_position, bullet_velocity, mAcceleration, mAngle, 0, 2000));
+	(new Bullet(bullet_position2, bullet_velocity2, mAcceleration, mAngle, 0, 2000));
 	bullet2->SetBoundingShape(make_shared<BoundingSphere>(bullet2->GetThisPtr(), 2.0f));
 	bullet2->SetShape(mBulletShape);
-	// Add the new bullet to the game world
 	mWorld->AddObject(bullet2);
-
-	bullet_position.y += 10;
-	shared_ptr<GameObject> bullet3
-	(new Bullet(bullet_position, bullet_velocity, mAcceleration, mAngle, 0, 2000));
-	//bullet3->AddPosition(10);
-	bullet3->SetBoundingShape(make_shared<BoundingSphere>(bullet3->GetThisPtr(), 2.0f));
-	bullet3->SetShape(mBulletShape);
-	// Add the new bullet to the game world
-	mWorld->AddObject(bullet3);
 }
 
 

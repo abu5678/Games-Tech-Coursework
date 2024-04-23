@@ -1,5 +1,5 @@
-#ifndef __SCOREKEEPER_H__
-#define __SCOREKEEPER_H__
+#ifndef __POWERUP_H__
+#define __POWERUP_H__
 
 #include "GameUtil.h"
 
@@ -7,7 +7,7 @@
 #include "GameObjectType.h"
 #include "IScoreListener.h"
 #include "IGameWorldListener.h"
-/**
+
 class PowerUp : public IGameWorldListener
 {
 public:
@@ -19,7 +19,7 @@ public:
 
 	void OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 	{
-		if (object->GetType() == GameObjectType("HeartPowerUp")) {
+		if (object->GetType() == GameObjectType("ExtraBulletsPowerUp")) {
 			mScore += 10;
 			FireScoreChanged();
 		}
@@ -47,4 +47,3 @@ private:
 };
 
 #endif
-*/
