@@ -12,7 +12,6 @@ public:
 	HeartPowerUp(const HeartPowerUp& e);
 	virtual ~HeartPowerUp(void);
 
-	virtual void Update(int t);
 	bool CollisionTest(shared_ptr<GameObject> o);
 	void OnCollision(const GameObjectList& objects);
 };

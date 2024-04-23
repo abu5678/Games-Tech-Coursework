@@ -19,15 +19,6 @@ HeartPowerUp::~HeartPowerUp(void) {}
 
 // PUBLIC INSTANCE METHODS ////////////////////////////////////////////////////
 
-/** Update HeartPowerUp, removing it from game world if necessary. */
-void HeartPowerUp::Update(int t)
-{
-	// Update position/velocity
-	GameObject::Update(t);
-
-	if (mSprite.get() == NULL) return;
-
-}
 
 bool HeartPowerUp::CollisionTest(shared_ptr<GameObject> o)
 {

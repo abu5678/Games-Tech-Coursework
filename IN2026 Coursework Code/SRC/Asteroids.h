@@ -69,6 +69,9 @@ private:
 	void CreateAsteroids(const uint num_asteroids);
 	shared_ptr<GameObject> CreateExplosion();
 	shared_ptr<GameObject> CreateHeartPowerUp();
+	shared_ptr<GameObject> CreateExtraBulletsPowerUp();
+	shared_ptr<GameObject> CreateLaserPowerUp();
+	shared_ptr<GameObject> CreateShieldPowerUp();
 
 	
 	const static uint SHOW_GAME_OVER = 0;
@@ -78,6 +81,7 @@ private:
 	ScoreKeeper mScoreKeeper;
 	Player mPlayer;
 	bool mgameStarted = false;
+	bool ExtraBulletsActive = false;
 };
 
 #endif
