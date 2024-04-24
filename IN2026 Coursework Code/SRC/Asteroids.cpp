@@ -57,6 +57,9 @@ void Asteroids::Start()
 
 	mPowerUp.AddListener(thisPtr);
 
+	mGameWorld->AddListener(&mEnemySpacship);
+	mEnemySpacship.AddListener(thisPtr);
+
 
 	// Create an ambient light to show sprite textures
 	GLfloat ambient_light[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -149,7 +152,6 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		{
 		case ' ':
 			mSpaceship->Shoot();
-			mEnemy->Shoot();
 			if (ExtraBulletsActive) mSpaceship->ShootExtraBullets();
 			break;
 		default:
@@ -189,7 +191,6 @@ void Asteroids::OnSpecialKeyReleased(int key, int x, int y)
 	default: break;
 	} 
 }
-
 
 // PUBLIC INSTANCE METHODS IMPLEMENTING IGameWorldListener ////////////////////
 
@@ -265,9 +266,15 @@ void Asteroids::OnTimer(int value)
 		ExtraBulletsPowerUpIcon->SetPosition(-1000);
 		ExtraBulletsActive = false;
 	}
+	if (value == ENEMY_SHOOT) {
+		mEnemy->Shoot();
+	}
 
 }
 
+void Asteroids :: ShootInterval() {
+	SetTimer(2000, ENEMY_SHOOT);
+}
 // PROTECTED INSTANCE METHODS /////////////////////////////////////////////////
 shared_ptr<GameObject> Asteroids::CreateSpaceship()
 {

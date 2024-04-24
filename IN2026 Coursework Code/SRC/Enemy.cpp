@@ -95,7 +95,7 @@ void Enemy::Shoot(void)
 
 bool Enemy::CollisionTest(shared_ptr<GameObject> o)
 {
-	if (o->GetType() != GameObjectType("Spaceship")) return false;
+	if (GetType() != GameObjectType("Bullet")) return false;
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
 	return mBoundingShape->CollisionTest(o->GetBoundingShape());

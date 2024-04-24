@@ -120,6 +120,8 @@
     <ClInclude Include="..\..\src\Bullet.h" />
     <ClInclude Include="..\..\SRC\Enemy.h" />
     <ClInclude Include="..\..\SRC\EnemyBullet.h" />
+    <ClInclude Include="..\..\SRC\EnemyListener.h" />
+    <ClInclude Include="..\..\SRC\EnemySpaceship.h" />
     <ClInclude Include="..\..\SRC\Explosion.h" />
     <ClInclude Include="..\..\SRC\ExtraBulletsPowerUp.h" />
     <ClInclude Include="..\..\SRC\HeartPowerUp.h" />
