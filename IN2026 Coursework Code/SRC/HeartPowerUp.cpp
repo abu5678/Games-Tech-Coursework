@@ -17,13 +17,9 @@ HeartPowerUp::HeartPowerUp(const HeartPowerUp& e) : GameObject(e) {}
 /** Destructor. */
 HeartPowerUp::~HeartPowerUp(void) {}
 
-// PUBLIC INSTANCE METHODS ////////////////////////////////////////////////////
-
-
 bool HeartPowerUp::CollisionTest(shared_ptr<GameObject> o)
 {
 	if (o->GetType() != GameObjectType("Bullet")) return false;
-	//if (GetType() == o->GetType()) return false;
 	if (mBoundingShape.get() == NULL) return false;
 	if (o->GetBoundingShape().get() == NULL) return false;
 	return mBoundingShape->CollisionTest(o->GetBoundingShape());

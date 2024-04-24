@@ -7,13 +7,13 @@
 #include "GameWorld.h"
 #include "GameDisplay.h"
 #include "Spaceship.h"
+#include "Enemy.h"
 #include "BoundingShape.h"
 #include "BoundingSphere.h"
 #include "GUILabel.h"
 #include "Explosion.h"
 #include "HeartPowerUp.h"
 #include "ExtraBulletsPowerUp.h"
-#include "ShieldPowerUp.h"
 
 
 // PUBLIC INSTANCE CONSTRUCTORS ///////////////////////////////////////////////
@@ -36,7 +36,6 @@ Asteroids::~Asteroids(void)
 /** Start an asteroids game. */
 void Asteroids::Start()
 {
-	//Displays the start message
 	DisplayStartScreen();
 
 	// Create a shared pointer for the Asteroids game object - DO NOT REMOVE
@@ -69,9 +68,10 @@ void Asteroids::Start()
 	Animation* explosion_anim = AnimationManager::GetInstance().CreateAnimationFromFile("explosion", 64, 1024, 64, 64, "explosion_fs.png");
 	Animation* HeartPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("HeartPowerUp", 128, 128, 128, 128, "heart_fs.png");
 	Animation* ExtraBulletsPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("ExtraBulletsPowerUp", 128, 128, 128, 128, "bullets_fs.png");
-	Animation* ShieldPowerUp_anim = AnimationManager::GetInstance().CreateAnimationFromFile("ShieldPowerUp", 128, 128, 128, 128, "shield_fs.png");
 	Animation* asteroid1_anim = AnimationManager::GetInstance().CreateAnimationFromFile("asteroid1", 128, 8192, 128, 128, "asteroid1_fs.png");
 	Animation* spaceship_anim = AnimationManager::GetInstance().CreateAnimationFromFile("spaceship", 128, 128, 128, 128, "spaceship_fs.png");
+	Animation* enemy_anim = AnimationManager::GetInstance().CreateAnimationFromFile("enemy", 128, 8192, 128, 128, "enemy_fs.png");
+
 
 	// Add a player (watcher) to the game world
 	mGameWorld->AddListener(&mPlayer);
@@ -90,8 +90,7 @@ void Asteroids::StartGame() {
 	mGameWorld->AddObject(CreateSpaceship());
 	// Create some asteroids and add them to the world
 	CreateAsteroids(10);
-
-
+	mGameWorld->AddObject(CreateEnemy());
 	//Make the start message dissapear
 	mStartLabel->SetVisible(false);
 	mTitleLabel->SetVisible(false);
@@ -114,9 +113,7 @@ void Asteroids::DisplayStartScreen()
 	mTitleLabel->SetVerticalAlignment(GUIComponent::GUI_VALIGN_TOP);
 	// Add the GUILabel to the GUIContainer  
 	shared_ptr<GUIComponent> title_component = static_pointer_cast<GUIComponent>(mTitleLabel);
-	mGameDisplay->GetContainer()->AddComponent(title_component, GLVector2f(0.5f, 1.0f));
-	title_component->SetSize(GLVector2i(10));
-	
+	mGameDisplay->GetContainer()->AddComponent(title_component, GLVector2f(0.5f, 1.0f));	
 
 	// Create a new GUILabel and wrap it up in a shared_ptr
 	mStartLabel = make_shared<GUILabel>("Press any key to start");
@@ -152,6 +149,7 @@ void Asteroids::OnKeyPressed(uchar key, int x, int y)
 		{
 		case ' ':
 			mSpaceship->Shoot();
+			mEnemy->Shoot();
 			if (ExtraBulletsActive) mSpaceship->ShootExtraBullets();
 			break;
 		default:
@@ -167,7 +165,7 @@ void Asteroids::OnSpecialKeyPressed(int key, int x, int y)
 	switch (key)
 	{
 	// If up arrow key is pressed start applying forward thrust
-	case GLUT_KEY_UP: mSpaceship->Thrust(10); break;
+	case GLUT_KEY_UP: mSpaceship->Thrust(10);break;
 	// If left arrow key is pressed start rotating anti-clockwise
 	case GLUT_KEY_LEFT: mSpaceship->Rotate(90); break;
 	// If right arrow key is pressed start rotating clockwise
@@ -204,14 +202,14 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 		explosion->SetRotation(object->GetRotation());
 		mGameWorld->AddObject(explosion);
 
-		int random = (rand() % 2);
-		if (random == 5) {
+		int random = (rand() % 5);
+		if (random == 1) {
 			shared_ptr<GameObject> HeartPowerUp = CreateHeartPowerUp();
 			HeartPowerUp->SetPosition(object->GetPosition());
 			HeartPowerUp->SetRotation(object->GetRotation());
 			mGameWorld->AddObject(HeartPowerUp);
 		}
-		if (random == 1 && !ExtraBulletsActive) {
+		if (random == 2 && !ExtraBulletsActive) {
 			shared_ptr<GameObject> ExtraBulletsPowerUp = CreateExtraBulletsPowerUp();
 			ExtraBulletsPowerUp->SetPosition(object->GetPosition());
 			ExtraBulletsPowerUp->SetRotation(object->GetRotation());
@@ -225,6 +223,14 @@ void Asteroids::OnObjectRemoved(GameWorld* world, shared_ptr<GameObject> object)
 			SetTimer(500, START_NEXT_LEVEL);
 		}
 	}
+	if (object->GetType() == GameObjectType("Enemy"))
+	{
+		shared_ptr<GameObject> explosion = CreateExplosion();
+		explosion->SetPosition(object->GetPosition());
+		explosion->SetRotation(object->GetRotation());
+		mGameWorld->AddObject(explosion);
+	}
+	
 	
 	if (object->GetType() == GameObjectType("ExtraBulletsPowerUp")) {
 		ExtraBulletsActive = true;
@@ -257,7 +263,6 @@ void Asteroids::OnTimer(int value)
 	if (value == EXTRABULLETSPOWERUP_OVER)
 	{
 		ExtraBulletsPowerUpIcon->SetPosition(-1000);
-		//ExtraBulletsPowerUpIcon = nullptr;
 		ExtraBulletsActive = false;
 	}
 
@@ -281,6 +286,28 @@ shared_ptr<GameObject> Asteroids::CreateSpaceship()
 	mSpaceship->Reset();
 	// Return the spaceship so it can be added to the world
 	return mSpaceship;
+
+}
+
+shared_ptr<GameObject> Asteroids::CreateEnemy()
+{
+	// Create a raw pointer to a Enemy that can be converted to
+	// shared_ptrs of different types because GameWorld implements IRefCount
+	mEnemy = make_shared<Enemy>();
+	mEnemy->SetBoundingShape(make_shared<BoundingSphere>(mEnemy->GetThisPtr(), 4.0f));
+	shared_ptr<Shape> bullet_shape = make_shared<Shape>("bullet.shape");
+	mEnemy->SetBulletShape(bullet_shape);
+	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("enemy");
+	shared_ptr<Sprite> Enemy_sprite =
+		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
+	Enemy_sprite->SetLoopAnimation(true);
+	mEnemy->SetSprite(Enemy_sprite);
+	mEnemy->SetScale(0.1f);
+	// Reset Enemy back to centre of the world
+	mEnemy->Reset();
+	mEnemy->SetPosition(-30);
+	// Return the Enemy so it can be added to the world
+	return mEnemy;
 
 }
 
@@ -351,7 +378,7 @@ void Asteroids::OnExtraBulletsPowerUpCollected() {
 	ExtraBulletsPowerUpIcon = CreateExtraBulletsPowerUpIcon();
 	ExtraBulletsPowerUpIcon->SetPosition(-75);
 	mGameWorld->AddObject(ExtraBulletsPowerUpIcon);
-	SetTimer(7500, EXTRABULLETSPOWERUP_OVER);
+	SetTimer(8000, EXTRABULLETSPOWERUP_OVER);
 }
 
 void Asteroids::OnHeartPickup(int lives_left)
@@ -440,17 +467,4 @@ shared_ptr<GameObject> Asteroids::CreateExtraBulletsPowerUpIcon()
 	return extraBulletsPowerUp;
 }
 
-shared_ptr<GameObject> Asteroids::CreateShieldPowerUp()
-{
-	Animation* anim_ptr = AnimationManager::GetInstance().GetAnimationByName("HeartPowerUp");
-	shared_ptr<Sprite> heart_sprite =
-		make_shared<Sprite>(anim_ptr->GetWidth(), anim_ptr->GetHeight(), anim_ptr);
-	heart_sprite->SetLoopAnimation(false);
-	shared_ptr<GameObject> heartPowerUp = make_shared<HeartPowerUp>();
-	heartPowerUp->SetBoundingShape(make_shared<BoundingSphere>(heartPowerUp->GetThisPtr(), 8.0f));
-	heartPowerUp->SetSprite(heart_sprite);
-	heartPowerUp->SetScale(0.1f);
-	heartPowerUp->Reset();
-	return heartPowerUp;
-}
 

@@ -106,17 +106,20 @@
     <ClCompile Include="..\..\SRC\Asteroid.cpp" />
     <ClCompile Include="..\..\src\Asteroids.cpp" />
     <ClCompile Include="..\..\src\Bullet.cpp" />
+    <ClCompile Include="..\..\SRC\Enemy.cpp" />
+    <ClCompile Include="..\..\SRC\EnemyBullet.cpp" />
     <ClCompile Include="..\..\SRC\Explosion.cpp" />
     <ClCompile Include="..\..\SRC\ExtraBulletsPowerUp.cpp" />
     <ClCompile Include="..\..\SRC\HeartPowerUp.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
-    <ClCompile Include="..\..\SRC\ShieldPowerUp.cpp" />
     <ClCompile Include="..\..\src\Spaceship.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\SRC\Asteroid.h" />
     <ClInclude Include="..\..\src\Asteroids.h" />
     <ClInclude Include="..\..\src\Bullet.h" />
+    <ClInclude Include="..\..\SRC\Enemy.h" />
+    <ClInclude Include="..\..\SRC\EnemyBullet.h" />
     <ClInclude Include="..\..\SRC\Explosion.h" />
     <ClInclude Include="..\..\SRC\ExtraBulletsPowerUp.h" />
     <ClInclude Include="..\..\SRC\HeartPowerUp.h" />
@@ -126,7 +129,6 @@
     <ClInclude Include="..\..\SRC\PowerUp.h" />
     <ClInclude Include="..\..\SRC\PowerUpListener.h" />
     <ClInclude Include="..\..\SRC\ScoreKeeper.h" />
-    <ClInclude Include="..\..\SRC\ShieldPowerUp.h" />
     <ClInclude Include="..\..\src\Spaceship.h" />
   </ItemGroup>
   <ItemGroup>
